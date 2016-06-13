@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/threadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="threadButton" />
+    <Button
+        android:id="@+id/asyncTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AsyncTask" />
+
+    <TextView
+        android:id="@+id/textThread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ThreadTest" />
+</LinearLayout>
