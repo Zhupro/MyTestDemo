@@ -83,7 +83,13 @@
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="MyWebView" />
+                android:text="MyWebView" />z
+
+            <Button
+                android:id="@+id/tabView"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="MyTabView" />
 
         </LinearLayout>
     </ScrollView>

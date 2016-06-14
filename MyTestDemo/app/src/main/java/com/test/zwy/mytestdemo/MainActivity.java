@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Button intentServicel;
     Button longRunningService;
     Button webView;
+    Button tabView;
+
     private MyService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
         //以下两个方法 在活动与服务成功绑定以及解除绑定的时候调⽤用。
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         intentServicel = (Button) findViewById(R.id.intentService);
         longRunningService = (Button) findViewById(R.id.longRunningService);
         webView = (Button)findViewById(R.id.webView);
+        tabView = (Button) findViewById(R.id.tabView);
         textview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,6 +183,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MyWebView.class);
+                startActivity(intent);
+            }
+        });
+        tabView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MainActivityTwo.class);
                 startActivity(intent);
             }
         });

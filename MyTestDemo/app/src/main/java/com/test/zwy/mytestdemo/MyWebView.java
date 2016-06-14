@@ -41,6 +41,7 @@ public class MyWebView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MyWebView.this,HttpURlConnection.class);
+                startActivity(i);
             }
         });
     }
