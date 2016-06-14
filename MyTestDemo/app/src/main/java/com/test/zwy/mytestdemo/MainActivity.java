@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 
 import com.nineoldandroids.view.ViewHelper;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Button stopService;
     Button bindService;
     Button unbindService;
+    Button foregtoundService;
+    Button intentServicel;
+    Button longRunningService;
+    Button webView;
     private MyService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
         //以下两个方法 在活动与服务成功绑定以及解除绑定的时候调⽤用。
@@ -85,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         stopService = (Button) findViewById(R.id.stopService);
         bindService = (Button) findViewById(R.id.bindService);
         unbindService = (Button) findViewById(R.id.unbindService);
+        foregtoundService = (Button) findViewById(R.id.foregtoundService);
+        intentServicel = (Button) findViewById(R.id.intentService);
+        longRunningService = (Button) findViewById(R.id.longRunningService);
+        webView = (Button)findViewById(R.id.webView);
         textview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +152,35 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
                 unbindService(connection);//解绑服务
+            }
+        });
+        foregtoundService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ForegtoundService.class);
+                startService(intent);//启动服务
+            }
+        });
+        intentServicel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("MainActivity", "Thread id is " + Thread.currentThread().getId());
+                Intent intentService = new Intent(MainActivity.this, MyIntentService.class);
+                startService(intentService);
+            }
+        });
+        longRunningService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LongRunningService.class);
+                startService(intent);
+            }
+        });
+        webView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MyWebView.class);
+                startActivity(intent);
             }
         });
     }

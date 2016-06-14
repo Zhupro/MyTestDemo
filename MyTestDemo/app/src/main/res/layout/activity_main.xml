@@ -62,10 +62,28 @@
                 android:text="unbindService;" />
 
             <Button
-                android:id="@+id/textview7"
+                android:id="@+id/foregtoundService"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Hello World!" />
+                android:text="ForegtoundService" />
+
+            <Button
+                android:id="@+id/intentService"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="start IntentService" />
+
+            <Button
+                android:id="@+id/longRunningService"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="LongRunningService" />
+
+            <Button
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="MyWebView" />
 
         </LinearLayout>
     </ScrollView>

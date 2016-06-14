@@ -31,6 +31,16 @@ public class MyService extends Service {
     @Override//每次服务启动时调用
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("MyService", "onStartCommand executed");
+        //service是在主线程中运行，所以service处理一些耗时处理时要开启子线程处理，否则会ANR（Application Not Responding）
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //处理具体的逻辑
+
+                stopSelf();//如果想要实现让⼀一个服务在执⾏行完毕后⾃自动停⽌的功能则调用
+            }
+        }).start();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
