@@ -19,9 +19,12 @@ import android.widget.Toast;
 
 import com.test.zwy.myapp.MyApplication;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -99,78 +102,66 @@ public class ThreadTest extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.text_view);
 
     }
+    private class MyTask extends AsyncTask<String,Integer,String>{
 
-    private class MyTask extends AsyncTask<String, Integer, String> {
-        //onPreExecute方法用于在执行后台任务前做一些UI操作
         @Override
         protected void onPreExecute() {
-            Log.i(TAG, "onPreExecute() called");
-            textView.setText("loading...");
+            super.onPreExecute();
+            textView.setText("loading");
         }
 
-        //doInBackground方法内部执行后台任务,不可在此方法内修改UI
         @Override
         protected String doInBackground(String... params) {
-            Log.i(TAG, "doInBackground(Params... params) called");
             HttpURLConnection connection = null;
-            try {
+            try{
                 URL url = new URL("http://www.baidu.com");
-                connection = (HttpURLConnection)
-                        url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(8000);
-                connection.setReadTimeout(8000);
-                InputStream is = (InputStream) connection.getContent();
+                connection = (HttpURLConnection) url.openConnection();//获取HttpURLConnection的实例
+                connection.setRequestMethod("GET");//设置http请求使用方法
+                connection.setConnectTimeout(8000);//设置连接超时毫秒数
+                connection.setReadTimeout(8000);//设置读取超时毫秒数
+
+                InputStream inputStream = connection.getInputStream();//获取服务器反悔的输入流
                 long total = connection.getContentLength();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buf = new byte[1024];
                 int count = 0;
                 int length = -1;
-                while ((length = is.read(buf)) != -1) {
+                while ((length = inputStream.read(buf))!=-1) {
                     baos.write(buf, 0, length);
                     count += length;
-                    //调用publishProgress公布进度,最后onProgressUpdate方法将被执行
-                    publishProgress((int) ((count / (float) total) * 100));
-                    //为了演示进度,休眠500毫秒
+                    publishProgress((int) (count / (float) total) * 100);
                     Thread.sleep(500);
-                    return new String(baos.toByteArray(), "gb2312");
                 }
-            } catch (
-                    Exception e
-                    )
 
-            {
-                Log.e(TAG, e.getMessage());
+                return  new String(baos.toByteArray(),"gb2312");
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
             return null;
         }
 
-        //onProgressUpdate方法用于更新进度信息
         @Override
-        protected void onProgressUpdate(Integer... progresses) {
-            Log.i(TAG, "onProgressUpdate(Progress... progresses) called");
-            progressBar.setProgress(progresses[0]);
-            textView.setText("loading..." + progresses[0] + "%");
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            progressBar.setProgress(values[0]);
+            textView.setText("loading..." + values[0] + "%");
         }
 
-        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
-        protected void onPostExecute(String result) {
-            Log.i(TAG, "onPostExecute(Result result) called");
-            textView.setText(result);
-
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressBar.setProgress(0);
+            textView.setText(s);
             execute.setEnabled(true);
             cancel.setEnabled(false);
         }
 
-        //onCancelled方法用于在取消执行中的任务时更改UI
         @Override
         protected void onCancelled() {
-            Log.i(TAG, "onCancelled() called");
-            textView.setText("cancelled");
+            super.onCancelled();
+            textView.setText("cancle");
             progressBar.setProgress(0);
-
             execute.setEnabled(true);
             cancel.setEnabled(false);
         }

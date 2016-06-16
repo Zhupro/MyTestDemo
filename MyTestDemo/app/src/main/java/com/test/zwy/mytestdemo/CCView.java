@@ -372,11 +372,11 @@ public class CCView extends View {
         node.paint.setTextAlign(Paint.Align.CENTER);
         if (isFill) {
             padding = dp2px(6);
-            node.paint.setTextSize(20);
+            node.paint.setTextSize(dp2px(20));
             node.paint.setColor(0xff222222);
         } else {
             padding = dp2px(10);
-            node.paint.setTextSize(26);
+            node.paint.setTextSize(dp2px(26));
             node.paint.setColor(0xffeeeeee);
         }
         node.paint.getTextBounds(text, 0, text.length(), rect);
