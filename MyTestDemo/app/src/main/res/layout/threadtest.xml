@@ -9,11 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="threadButton" />
-    <Button
-        android:id="@+id/asyncTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="AsyncTask" />
+
 
     <TextView
         android:id="@+id/textThread"
@@ -21,4 +17,32 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="ThreadTest" />
+
+
+    <Button
+        android:id="@+id/execute"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="execute"/>
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="cancel"/>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:progress="0"
+        android:max="100"
+        style="?android:attr/progressBarStyleHorizontal"/>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/text_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
 </LinearLayout>
