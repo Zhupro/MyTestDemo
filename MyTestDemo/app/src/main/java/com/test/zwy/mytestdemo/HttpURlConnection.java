@@ -5,15 +5,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -22,6 +26,8 @@ import java.net.URL;
 public class HttpURlConnection extends AppCompatActivity {
     Button httpButton;
     TextView httpText;
+    private Button pullButton;
+
     private static final int SHOW_RESPONSE = 0;
     private Handler handler = new Handler() {
         @Override
@@ -45,10 +51,17 @@ public class HttpURlConnection extends AppCompatActivity {
     private void init() {
         httpButton = (Button) findViewById(R.id.httpButton);
         httpText = (TextView) findViewById(R.id.httpText);
+        pullButton = (Button) findViewById(R.id.pullButton);
         httpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRequestWithHttpURLConnection();
+            }
+        });
+        pullButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRequestWithHttpClient();
             }
         });
     }
@@ -60,7 +73,7 @@ public class HttpURlConnection extends AppCompatActivity {
             public void run() {
                 HttpURLConnection connection = null;
                 try {
-                    URL url = new URL("http://www.baidu.com");
+                    URL url = new URL("http://192.168.0.211/myTest.xml");
                     connection = (HttpURLConnection)
                             url.openConnection();
                     connection.setRequestMethod("GET");
@@ -89,5 +102,73 @@ public class HttpURlConnection extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    private void sendRequestWithHttpClient() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                try {
+                    URL url = new URL("http://192.168.0.211/myTest.xml");
+                    connection = (HttpURLConnection)
+                            url.openConnection();
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuffer response = new StringBuffer();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    parseXMLWithPull(response.toString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void parseXMLWithPull(String xmlData) {
+        try {
+            XmlPullParserFactory factory =
+                    XmlPullParserFactory.newInstance();
+            XmlPullParser xmlPullParser = factory.newPullParser();
+            xmlPullParser.setInput(new StringReader(xmlData));
+            int eventType = xmlPullParser.getEventType();
+            String id = "";
+            String name = "";
+            String version = "";
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                String nodeName = xmlPullParser.getName();
+                switch (eventType) {
+// 开始解析某个结点
+                    case XmlPullParser.START_TAG: {
+                        if ("id".equals(nodeName)) {
+                            id = xmlPullParser.nextText();
+                        } else if ("name".equals(nodeName)) {
+                            name = xmlPullParser.nextText();
+                        } else if ("version".equals(nodeName)) {
+                            version = xmlPullParser.nextText();
+                        }
+                        break;
+                    }
+// 完成解析某个结点
+                    case XmlPullParser.END_TAG: {
+                        if ("app".equals(nodeName)) {
+                            Log.d("MainActivity", "id is " + id);
+                            Log.d("MainActivity", "name is " + name);
+                            Log.d("MainActivity", "version is " + version);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                eventType = xmlPullParser.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
