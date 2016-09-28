@@ -50,7 +50,7 @@ public class MyService extends Service {
         Log.d("MyService", "onDestroy executed");
     }
 
-    class DownloadBinder extends Binder {
+    public class DownloadBinder extends Binder {
 
         public void startDownload() {
             Log.d("MyService", "startDownload executed");

@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.test.zwy.main.MainSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,9 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ThreadTest" />
+        <activity android:name="com.test.zwy.main.MainActivity" />
         <activity android:name=".MyWebView" />
         <activity android:name=".MainActivityTwo" />
         <activity android:name=".HttpURlConnection" />
+
         <service android:name=".MyService" />
         <service android:name=".ForegtoundService" />
         <service android:name=".MyIntentService"></service>

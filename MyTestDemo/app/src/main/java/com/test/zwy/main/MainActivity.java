@@ -1,4 +1,4 @@
-package com.test.zwy.mytestdemo;
+package com.test.zwy.main;
 
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
@@ -8,16 +8,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.nineoldandroids.view.ViewHelper;
-import com.test.zwy.myapp.MyApplication;
+import com.test.zwy.mytestdemo.ForegtoundService;
+import com.test.zwy.mytestdemo.LongRunningService;
+import com.test.zwy.mytestdemo.MainActivityTwo;
+import com.test.zwy.mytestdemo.MyIntentService;
+import com.test.zwy.mytestdemo.MyService;
+import com.test.zwy.mytestdemo.MyWebView;
+import com.test.zwy.mytestdemo.R;
+import com.test.zwy.mytestdemo.ThreadTest;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     Button textview;
@@ -33,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Button longRunningService;
     Button webView;
     Button tabView;
+
+    private long exitTime = 0;
 
     private MyService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
@@ -95,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         foregtoundService = (Button) findViewById(R.id.foregtoundService);
         intentServicel = (Button) findViewById(R.id.intentService);
         longRunningService = (Button) findViewById(R.id.longRunningService);
-        webView = (Button)findViewById(R.id.webView);
+        webView = (Button) findViewById(R.id.webView);
         tabView = (Button) findViewById(R.id.tabView);
         textview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,5 +326,28 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDoubleTapEvent(MotionEvent e) {
         return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                this.exitApp();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 退出程序
+     */
+    private void exitApp() {
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(this, "不再看看了啊？", Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }
     }
 }

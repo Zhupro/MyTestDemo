@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 
+import com.test.zwy.main.MainActivity;
+
 /**
  * Created by FERO010 on 2016/6/13.
  */
