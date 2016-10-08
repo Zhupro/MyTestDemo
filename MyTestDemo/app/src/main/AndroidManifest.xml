@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ThreadTest" />
+        <activity android:name="com.test.zwy.main.GuidePage"/>
         <activity android:name="com.test.zwy.main.MainActivity" />
         <activity android:name=".MyWebView" />
         <activity android:name=".MainActivityTwo" />
