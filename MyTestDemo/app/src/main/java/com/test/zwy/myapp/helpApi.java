@@ -83,4 +83,33 @@ public class helpApi {
         }
         return 0;
     }
+    /**
+     * 根据手机的分辨率从 dp(像素) 的单位 转成为 px
+     */
+    public static int dip2px(float dpValue) {
+        return dip2px(null, dpValue);
+    }
+
+    public static int dip2px(Context context, float dpValue) {
+        if (context == null) {
+            context = MyApplication.getContext();
+        }
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
+     */
+    public static int px2dip(float pxValue) {
+        return px2dip(null, pxValue);
+    }
+
+    public static int px2dip(Context context, float pxValue) {
+        if (context == null) {
+            context = MyApplication.getContext();
+        }
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
 }
