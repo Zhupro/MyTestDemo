@@ -90,6 +90,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="MyTabView" />
+            <Button
+                android:id="@+id/changeColorImage"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="MyTabView" />
 
         </LinearLayout>
     </ScrollView>

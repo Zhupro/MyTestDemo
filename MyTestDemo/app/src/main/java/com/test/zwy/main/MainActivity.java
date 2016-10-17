@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.nineoldandroids.view.ViewHelper;
+import com.test.zwy.mytestdemo.ChangeColorImage;
 import com.test.zwy.mytestdemo.ForegtoundService;
 import com.test.zwy.mytestdemo.LongRunningService;
 import com.test.zwy.mytestdemo.MainActivityTwo;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Button longRunningService;
     Button webView;
     Button tabView;
+    Button changeColorImage;
 
     private long exitTime = 0;
 
@@ -108,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         longRunningService = (Button) findViewById(R.id.longRunningService);
         webView = (Button) findViewById(R.id.webView);
         tabView = (Button) findViewById(R.id.tabView);
+        changeColorImage = (Button) findViewById(R.id.changeColorImage);
+
+
         textview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,63 +209,70 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 startActivity(intent);
             }
         });
+        changeColorImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ChangeColorImage.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
      * 弹性滑动
      */
-    private void toAnimator() {
+//    private void toAnimator() {
+//
+//        final int startX = 0;
+//        final int deltaX = 200;
+//        ValueAnimator animator = ValueAnimator.ofInt(0, 1).setDuration(1000);
+//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                float fraction = animation.getAnimatedFraction();
+//                textview.scrollTo(startX + (int) (deltaX * fraction), 0);
+//            }
+//        });
+//        animator.start();
+//    }
 
-        final int startX = 0;
-        final int deltaX = 200;
-        ValueAnimator animator = ValueAnimator.ofInt(0, 1).setDuration(1000);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float fraction = animation.getAnimatedFraction();
-                textview.scrollTo(startX + (int) (deltaX * fraction), 0);
-            }
-        });
-        animator.start();
-    }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int mLastX = 0;
-        int mLastY = 0;
-        int x = (int) event.getRawX();
-        int y = (int) event.getRawY();
-        switch (event.getAction()) {
-
-            case MotionEvent.ACTION_DOWN: {
-                break;
-            }
-            case MotionEvent.ACTION_MOVE: {
-
-                int deltaX = x - mLastX;
-                int deltaY = y - mLastY;
-                Log.d("TAG", "move,deltaX:" + deltaX + " deltaY:" + deltaY);
-                int translationX = (int) (ViewHelper.getTranslationX(getWindow().getDecorView()) + deltaX);
-                int translationY = (int) (ViewHelper.getTranslationY(getWindow().getDecorView()) + deltaY);
-
-                ViewHelper.setTranslationX(getWindow().getDecorView(), translationX);
-                ViewHelper.setTranslationY(getWindow().getDecorView(), translationY);
-                break;
-            }
-            case MotionEvent.ACTION_UP: {
-                break;
-            }
-            default:
-                break;
-        }
-
-        mLastX = x;
-        mLastY = y;
-
-        return true;
-        //GestureDetector专用
-        // this.mGestureDetector.onTouchEvent(event);
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        int mLastX = 0;
+//        int mLastY = 0;
+//        int x = (int) event.getRawX();
+//        int y = (int) event.getRawY();
+//        switch (event.getAction()) {
+//
+//            case MotionEvent.ACTION_DOWN: {
+//                break;
+//            }
+//            case MotionEvent.ACTION_MOVE: {
+//
+//                int deltaX = x - mLastX;
+//                int deltaY = y - mLastY;
+//                Log.d("TAG", "move,deltaX:" + deltaX + " deltaY:" + deltaY);
+//                int translationX = (int) (ViewHelper.getTranslationX(getWindow().getDecorView()) + deltaX);
+//                int translationY = (int) (ViewHelper.getTranslationY(getWindow().getDecorView()) + deltaY);
+//
+//                ViewHelper.setTranslationX(getWindow().getDecorView(), translationX);
+//                ViewHelper.setTranslationY(getWindow().getDecorView(), translationY);
+//                break;
+//            }
+//            case MotionEvent.ACTION_UP: {
+//                break;
+//            }
+//            default:
+//                break;
+//        }
+//
+//        mLastX = x;
+//        mLastY = y;
+//
+//        return true;
+    //GestureDetector专用
+    // this.mGestureDetector.onTouchEvent(event);
 //        //速度追踪
 //        VelocityTracker velocityTracker = VelocityTracker.obtain();
 //        velocityTracker.addMovement(event);
@@ -275,10 +287,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //        velocityTracker.clear();
 //        velocityTracker.recycle();
 
-        //return super.onTouchEvent(event);
-    }
-
-
+    //return super.onTouchEvent(event);
+//    }
     @Override
     public boolean onDown(MotionEvent e) {
         Log.d("!!onDown", "onDown: " + e.toString());
