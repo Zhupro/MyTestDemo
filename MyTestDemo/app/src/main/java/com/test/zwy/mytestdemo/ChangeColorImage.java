@@ -13,12 +13,17 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.test.zwy.myapp.MyApplication;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,6 +53,8 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
     TextView textView3;
     @Bind(R.id.textView4)
     TextView textView4;
+    @Bind(R.id.getimage)
+    Button getimage;
 
     private Bitmap copyBitmap;
     private Bitmap baseBitmap;
@@ -67,30 +74,27 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
         init();
     }
 
+    //接受消息并更新ui
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
-                    textView1.setText("调整红色值");
-                    textView1.setText("调整绿色值");
-                    textView1.setText("调整蓝色值");
-                    textView1.setText("调整透明度");
+
                     initBitMap();
                     break;
                 case 1:
-                    textView1.setText("调整红色值");
-                    textView1.setText("调整绿色值");
-                    textView1.setText("调整蓝色值");
-                    textView1.setText("调整透明度");
+
                     initBitMap();
                     break;
                 case 2:
-                    textView1.setText("调整色调");
-                    textView1.setText("调整饱和度");
-                    textView1.setText("调整亮度");
+
                     initBitMap();
+                    break;
+                case 3:
+
+                    saveBitmap();
                     break;
             }
         }
@@ -107,17 +111,34 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
             public void onClick(View v) {
                 if (msg == 0) {
                     msg = 1;
-                    Toast.makeText(MyApplication.getContext(), "msg -> 1 ,此时调整偏移量", Toast.LENGTH_SHORT).show();
+                    textView1.setText("调整红色值");
+                    textView2.setText("调整绿色值");
+                    textView3.setText("调整蓝色值");
+                    textView4.setText("调整透明度");
+                    Toast.makeText(MyApplication.getContext(), "msg = 1 ,此时调整偏移量", Toast.LENGTH_SHORT).show();
                 } else if (msg == 1) {
                     msg = 2;
-                    Toast.makeText(MyApplication.getContext(), "msg -> 2 ,此时调整色调", Toast.LENGTH_SHORT).show();
-                } else {
+                    textView1.setText("调整色调");
+                    textView2.setText("调整饱和度");
+                    textView3.setText("调整亮度");
+                    Toast.makeText(MyApplication.getContext(), "msg = 2 ,此时调整色调", Toast.LENGTH_SHORT).show();
+                } else if (msg == 2){
                     msg = 0;
-                    Toast.makeText(MyApplication.getContext(), "msg -> 0 ,此时调整色值", Toast.LENGTH_SHORT).show();
+                    textView1.setText("调整红色值");
+                    textView2.setText("调整绿色值");
+                    textView3.setText("调整蓝色值");
+                    textView4.setText("调整透明度");
+                    Toast.makeText(MyApplication.getContext(), "msg = 0 ,此时调整色值", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        getimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateUi(3);
+            }
+        });
     }
 
     @Override
@@ -152,6 +173,7 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
         }
     }
 
+    //发送更新ui消息
     private void updateUi(final int msg) {
 
         new Thread(new Runnable() {
@@ -191,18 +213,20 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
         } else {
 
             ColorMatrix mColorMatrix = new ColorMatrix(); //设置色调
-            mColorMatrix.setRotate(0, redValue);//redValue表示色调变化值
-            mColorMatrix.setRotate(1, redValue);
-            mColorMatrix.setRotate(2, redValue);
+            //第一参数可传入:0,1,2（０，１，２分别代表red,green,blue三种颜色的处理）
+            mColorMatrix.setRotate(0, redValue);//0代表红色，redValue表示需要对红色处理的值
+            mColorMatrix.setRotate(1, redValue);//0代表绿色，redValue表示需要对绿色处理的值
+            mColorMatrix.setRotate(2, redValue);//0代表蓝色，redValue表示需要对蓝色处理的值
             //设置饱和度
             ColorMatrix mBaoheMatrix = new ColorMatrix();
-            mBaoheMatrix.setSaturation(greenValue);//greenValue表示饱和度变化值
+            mBaoheMatrix.setSaturation(greenValue);//greenValue表示饱和度变化值  当饱和度的颜色变为０的时候图片就变为灰色的图片了
             //设置亮度：colorMatrix.setScale(rScale, gScale, bScale, aScale)//第一个参数表示:红色第二个表示绿色，第三个表示蓝色，第四个表示透明度
             // 当三原色如果是以相同的比例混合的话，就会显示出白色。系统也就是根据这些原理来修改一个图像的亮度的。当亮度为０，图像就变黑了。
             // 所以他们比例一样
             ColorMatrix mLightMatrix = new ColorMatrix();
             mLightMatrix.setScale(blueValue, blueValue, blueValue, 1);//blueValue表示亮度变化值
             //再创建组合的ColorMatrix对象将上面三种ColorMatrix的效果混合在一起
+            //然后还有一个很重要的API,可以使用postConcat()方法将矩阵作用效果混合在一起，从而形成叠加的效果
             ColorMatrix mImageViewMatrix = new ColorMatrix();
             mImageViewMatrix.postConcat(mColorMatrix);
             mImageViewMatrix.postConcat(mBaoheMatrix);
@@ -226,5 +250,25 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    //保存图片
+    private void saveBitmap() {
+        long time = System.currentTimeMillis();
+        File file = new File("/sdcard/beadImage" + String.valueOf(time) + ".png");
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            copyBitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            Toast.makeText(MyApplication.getContext(), "已保存到sdCard内", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
