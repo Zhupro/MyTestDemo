@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +60,7 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
     private Bitmap copyBitmap;
     private Bitmap baseBitmap;
     private Canvas canvas;
-    private Paint paint;
+
     private int msg = 0;
     private float[] colorArray;//颜色矩阵
     private float count;//符合矩阵中每个元素的取值
@@ -75,30 +76,7 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
     }
 
     //接受消息并更新ui
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 0:
-
-                    initBitMap();
-                    break;
-                case 1:
-
-                    initBitMap();
-                    break;
-                case 2:
-
-                    initBitMap();
-                    break;
-                case 3:
-
-                    saveBitmap();
-                    break;
-            }
-        }
-    };
+    Handler mHandler = null;
 
     private void init() {
         seekBarRed.setOnSeekBarChangeListener(this);
@@ -122,7 +100,7 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
                     textView2.setText("调整饱和度");
                     textView3.setText("调整亮度");
                     Toast.makeText(MyApplication.getContext(), "msg = 2 ,此时调整色调", Toast.LENGTH_SHORT).show();
-                } else if (msg == 2){
+                } else if (msg == 2) {
                     msg = 0;
                     textView1.setText("调整红色值");
                     textView2.setText("调整绿色值");
@@ -175,23 +153,69 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
 
     //发送更新ui消息
     private void updateUi(final int msg) {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.sendEmptyMessage(msg);
-
-            }
-        }).start();
+        if (mHandler == null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    mHandler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            doMsg(msg.what);
+                        }
+                    };
+                    doMsg(msg);
+                    Looper.loop();
+                }
+            }).start();
+        } else {
+            mHandler.sendEmptyMessage(msg);
+        }
     }
 
+    void doMsg(int what) {
+        switch (what) {
+            case 0:
+                mHandler.removeMessages(0);
+                initBitMap();
+                break;
+            case 1:
+                mHandler.removeMessages(1);
+                initBitMap();
+                break;
+            case 2:
+                mHandler.removeMessages(2);
+                initBitMap();
+                break;
+            case 3:
+                mHandler.removeMessages(3);
+                saveBitmap();
+                break;
+        }
+    }
+
+    Bitmap copyBitmapTemp;
+    Bitmap copyBitmapTemp1;
+
     private void initBitMap() {
-        //先加载出一张原图(baseBitmap)，然后复制出来新的图片(copyBitmap)来，因为andorid不允许对原图进行修改.
-        baseBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hhh);
-        //既然是复制一张与原图一模一样的图片那么这张复制图片的画纸的宽度和高度以及分辨率都要与原图一样,copyBitmap就为一张与原图相同尺寸分辨率的空白画纸
-        copyBitmap = Bitmap.createBitmap(baseBitmap.getWidth(), baseBitmap.getHeight(), baseBitmap.getConfig());
-        canvas = new Canvas(copyBitmap);//将画纸固定在画布上
-        paint = new Paint();//实例画笔对象
+        final Paint paint = new Paint();
+        if (baseBitmap == null) {
+            //先加载出一张原图(baseBitmap)，然后复制出来新的图片(copyBitmap)来，因为andorid不允许对原图进行修改.
+            baseBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hhh);
+            //既然是复制一张与原图一模一样的图片那么这张复制图片的画纸的宽度和高度以及分辨率都要与原图一样,copyBitmap就为一张与原图相同尺寸分辨率的空白画纸
+            // copyBitmap = Bitmap.createBitmap(baseBitmap.getWidth(), baseBitmap.getHeight(), baseBitmap.getConfig());
+            // canvas = new Canvas(copyBitmap);//将画纸固定在画布上
+        }
+
+        if(copyBitmapTemp==null){
+            //既然是复制一张与原图一模一样的图片那么这张复制图片的画纸的宽度和高度以及分辨率都要与原图一样,copyBitmap就为一张与原图相同尺寸分辨率的空白画纸
+            copyBitmapTemp = Bitmap.createBitmap(baseBitmap.getWidth(), baseBitmap.getHeight(), baseBitmap.getConfig());
+        }
+
+        canvas = new Canvas(copyBitmapTemp);//将画纸固定在画布上
+
+
         ColorMatrixColorFilter colorFilter;
         if (msg == 0) {
             colorArray = new float[]{
@@ -215,8 +239,8 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
             ColorMatrix mColorMatrix = new ColorMatrix(); //设置色调
             //第一参数可传入:0,1,2（０，１，２分别代表red,green,blue三种颜色的处理）
             mColorMatrix.setRotate(0, redValue);//0代表红色，redValue表示需要对红色处理的值
-            mColorMatrix.setRotate(1, redValue);//0代表绿色，redValue表示需要对绿色处理的值
-            mColorMatrix.setRotate(2, redValue);//0代表蓝色，redValue表示需要对蓝色处理的值
+            mColorMatrix.setRotate(1, redValue);//1代表绿色，redValue表示需要对绿色处理的值
+            mColorMatrix.setRotate(2, redValue);//2代表蓝色，redValue表示需要对蓝色处理的值
             //设置饱和度
             ColorMatrix mBaoheMatrix = new ColorMatrix();
             mBaoheMatrix.setSaturation(greenValue);//greenValue表示饱和度变化值  当饱和度的颜色变为０的时候图片就变为灰色的图片了
@@ -237,10 +261,21 @@ public class ChangeColorImage extends AppCompatActivity implements SeekBar.OnSee
 
 
         paint.setColorFilter(colorFilter);//并把该过滤器设置给画笔
-        canvas.drawBitmap(baseBitmap, new Matrix(), paint);//传如baseBitmap表示按照原图样式开始绘制，将得到是复制后的图片
-        changeImage.setImageBitmap(copyBitmap);
 
+        canvas.drawBitmap(baseBitmap, new Matrix(), paint);//传如baseBitmap表示按照原图样式开始绘制，将得到是复制后的图片
+
+        this.copyBitmap = copyBitmapTemp;
+        h.removeCallbacks(runUpdate);
+        h.post(runUpdate);
     }
+
+    Handler h = new Handler();
+    Runnable runUpdate = new Runnable() {
+        @Override
+        public void run() {
+            changeImage.setImageBitmap(copyBitmap);
+        }
+    };
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
